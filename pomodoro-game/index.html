@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍅 番茄工作法游戏 - Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-theme="default">
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🍅</span>
+                <h1>番茄工作法</h1>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" id="statsBtn" title="统计数据">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 13h2v8H3v-8zm4-6h2v14H7V7zm4 3h2v11h-2V10zm4-6h2v17h-2V4zm4 9h2v8h-2v-8z"/></svg>
+                </button>
+                <button class="nav-btn" id="settingsBtn" title="设置">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                </button>
+                <button class="nav-btn" id="themeBtn" title="切换主题">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar - Task List -->
+            <aside class="sidebar" id="taskSidebar">
+                <div class="sidebar-header">
+                    <h2>📋 任务列表</h2>
+                    <button class="btn-icon" id="addTaskBtn" title="添加任务">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </button>
+                </div>
+                <div class="task-input-container" id="taskInputContainer">
+                    <input type="text" id="taskInput" placeholder="输入任务名称..." maxlength="50">
+                    <div class="task-input-options">
+                        <label>预估番茄数: 
+                            <input type="number" id="taskPomodoros" min="1" max="20" value="1">
+                        </label>
+                        <button class="btn-primary btn-sm" id="saveTaskBtn">保存</button>
+                        <button class="btn-secondary btn-sm" id="cancelTaskBtn">取消</button>
+                    </div>
+                </div>
+                <ul class="task-list" id="taskList">
+                    <!-- Tasks will be rendered here -->
+                </ul>
+                <div class="sidebar-footer">
+                    <div class="daily-goal">
+                        <span>今日目标: </span>
+                        <span id="dailyProgress">0</span>/<span id="dailyGoal">8</span> 🍅
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dailyProgressBar"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Timer Section -->
+            <section class="timer-section">
+                <!-- Current Task Display -->
+                <div class="current-task" id="currentTask">
+                    <span class="current-task-label">当前任务</span>
+                    <span class="current-task-name" id="currentTaskName">选择一个任务开始</span>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="timer-container">
+                    <div class="timer-ring">
+                        <svg class="timer-svg" viewBox="0 0 200 200">
+                            <circle class="timer-bg" cx="100" cy="100" r="90"/>
+                            <circle class="timer-progress" id="timerProgress" cx="100" cy="100" r="90"/>
+                        </svg>
+                        <div class="timer-inner">
+                            <div class="timer-mode" id="timerMode">工作时间</div>
+                            <div class="timer-display" id="timerDisplay">25:00</div>
+                            <div class="timer-session">
+                                <span id="sessionCount">0</span>/4 番茄
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="timer-controls">
+                    <button class="control-btn secondary" id="resetBtn" title="重置 (R)">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                    <button class="control-btn primary" id="startBtn" title="开始/暂停 (Space)">
+                        <svg class="play-icon" viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                        <svg class="pause-icon hidden" viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    <button class="control-btn secondary" id="skipBtn" title="跳过 (S)">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                    </button>
+                </div>
+
+                <!-- Streak & Achievements -->
+                <div class="streak-display">
+                    <div class="streak-item">
+                        <span class="streak-icon">🔥</span>
+                        <span class="streak-value" id="currentStreak">0</span>
+                        <span class="streak-label">连击</span>
+                    </div>
+                    <div class="streak-item">
+                        <span class="streak-icon">⭐</span>
+                        <span class="streak-value" id="totalPomodoros">0</span>
+                        <span class="streak-label">总番茄</span>
+                    </div>
+                    <div class="streak-item">
+                        <span class="streak-icon">🏆</span>
+                        <span class="streak-value" id="achievementCount">0</span>
+                        <span class="streak-label">成就</span>
+                    </div>
+                </div>
+
+                <!-- Audio Controls -->
+                <div class="audio-controls">
+                    <button class="audio-btn" id="tickSoundBtn" title="滴答声">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    </button>
+                    <button class="audio-btn active" id="notifSoundBtn" title="提示音">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    </button>
+                    <button class="audio-btn" id="ambientBtn" title="背景音乐">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3l.01 10.55c-.59-.34-1.27-.55-2.01-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3H12z"/></svg>
+                    </button>
+                    <div class="volume-control">
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Quick Stats -->
+            <aside class="right-panel">
+                <div class="panel-section achievements-panel">
+                    <h3>🏅 最新成就</h3>
+                    <div class="achievement-list" id="recentAchievements">
+                        <div class="achievement-placeholder">完成番茄解锁成就!</div>
+                    </div>
+                </div>
+                <div class="panel-section today-stats">
+                    <h3>📊 今日统计</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">专注时间</span>
+                        <span class="stat-value" id="todayFocusTime">0分钟</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">完成番茄</span>
+                        <span class="stat-value" id="todayPomodoros">0个</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">完成任务</span>
+                        <span class="stat-value" id="todayTasks">0个</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 设置</h2>
+                <button class="modal-close" id="closeSettings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>计时器设置</h3>
+                    <div class="setting-item">
+                        <label>工作时长 (分钟)</label>
+                        <input type="number" id="workDuration" min="1" max="60" value="25">
+                    </div>
+                    <div class="setting-item">
+                        <label>短休息时长 (分钟)</label>
+                        <input type="number" id="shortBreakDuration" min="1" max="30" value="5">
+                    </div>
+                    <div class="setting-item">
+                        <label>长休息时长 (分钟)</label>
+                        <input type="number" id="longBreakDuration" min="5" max="60" value="15">
+                    </div>
+                    <div class="setting-item">
+                        <label>长休息间隔 (番茄数)</label>
+                        <input type="number" id="longBreakInterval" min="2" max="10" value="4">
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>目标设置</h3>
+                    <div class="setting-item">
+                        <label>每日番茄目标</label>
+                        <input type="number" id="dailyGoalSetting" min="1" max="20" value="8">
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>通知设置</h3>
+                    <div class="setting-item">
+                        <label>桌面通知</label>
+                        <label class="switch">
+                            <input type="checkbox" id="desktopNotif" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>自动开始下一个</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoStart">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>主题选择</h3>
+                    <div class="theme-options">
+                        <button class="theme-btn" data-theme="default">🍅 默认</button>
+                        <button class="theme-btn" data-theme="nature">🌿 自然</button>
+                        <button class="theme-btn" data-theme="dark">🌙 暗黑</button>
+                        <button class="theme-btn" data-theme="ocean">🌊 海洋</button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>数据管理</h3>
+                    <div class="setting-actions">
+                        <button class="btn-secondary" id="exportDataBtn">导出数据</button>
+                        <button class="btn-danger" id="clearDataBtn">清除所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>📊 统计数据</h2>
+                <button class="modal-close" id="closeStats">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-tabs">
+                    <button class="stats-tab active" data-tab="daily">今日</button>
+                    <button class="stats-tab" data-tab="weekly">本周</button>
+                    <button class="stats-tab" data-tab="monthly">本月</button>
+                    <button class="stats-tab" data-tab="achievements">成就</button>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-panel active" id="dailyStats">
+                        <div class="stats-summary">
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsTodayPomodoros">0</div>
+                                <div class="summary-label">完成番茄</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsTodayFocus">0h</div>
+                                <div class="summary-label">专注时间</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsTodayTasks">0</div>
+                                <div class="summary-label">完成任务</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h4>今日专注时段分布</h4>
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="stats-panel" id="weeklyStats">
+                        <div class="stats-summary">
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsWeekPomodoros">0</div>
+                                <div class="summary-label">完成番茄</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsWeekFocus">0h</div>
+                                <div class="summary-label">专注时间</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsWeekAvg">0</div>
+                                <div class="summary-label">日均番茄</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h4>本周番茄趋势</h4>
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="stats-panel" id="monthlyStats">
+                        <div class="stats-summary">
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsMonthPomodoros">0</div>
+                                <div class="summary-label">完成番茄</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsMonthFocus">0h</div>
+                                <div class="summary-label">专注时间</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value" id="statsMonthBest">0</div>
+                                <div class="summary-label">最佳单日</div>
+                            </div>
+                        </div>
+                        <div class="chart-container heatmap-container">
+                            <h4>专注热力图</h4>
+                            <div class="heatmap" id="heatmap"></div>
+                        </div>
+                    </div>
+                    <div class="stats-panel" id="achievementsPanel">
+                        <div class="achievements-grid" id="achievementsGrid">
+                            <!-- Achievements will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration Animation Container -->
+    <div class="celebration-container" id="celebrationContainer"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
